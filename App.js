@@ -1,19 +1,29 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { Component } from 'react'
+import { AppRegistry } from 'react-native';
+/*redux configuration*/
+//import { applyMiddleware, compose, createStore } from 'redux'
+import { persistStore, persistReducer } from 'redux-persist'
+import { PersistGate } from 'redux-persist/integration/react'
+import { Provider } from 'react-redux';
+import FlashMessage from "react-native-flash-message";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
-  );
+//app views and components
+import App from './index';
+import { store } from "./redux/store";
+
+export const persistor = persistStore(store);
+
+export default class toTravel extends Component {
+  render () {
+    return (
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <App />
+              <FlashMessage position="top" />
+          </PersistGate>
+        </Provider>
+    )
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+AppRegistry.registerComponent('toTravel', () => toTravel);
