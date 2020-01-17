@@ -33,11 +33,9 @@ class App extends React.Component {
       return (
         <View style={styles.container}>
           {Platform.OS === "ios" && <StatusBar barStyle="default" />}
-          {this.props.user === null ? (
-            <Login />
-          ) : (
+          
             <Navigation />
-          )}
+      
         </View>
       );
     }
@@ -62,18 +60,11 @@ class App extends React.Component {
   };
 }
 
-const mapStateToProps = state => {
-  const { user } = state.session;
-  return {
-    user:{
-    nickname: user === undefined ? null : user.nickname,
-  }};
-};
-export default connect(mapStateToProps)(App);
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
+    flex: 1
   }
 });
