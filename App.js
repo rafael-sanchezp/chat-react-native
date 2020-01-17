@@ -17,10 +17,8 @@ export default class toTravel extends Component {
   render () {
     return (
         <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
             <App />
               <FlashMessage position="top" />
-          </PersistGate>
         </Provider>
     )
   }

@@ -1,13 +1,13 @@
 import { SET_SESSION, CLEAR_SESION } from '../ActionTypes.js'
 const session = (state = { }, action) => {
     switch (action.type) {
-        case SET_SESSION : {
+        case "SET_USER": {
         const { user } = action;
         return Object.assign({}, state, {
-            user:user
+            user
          }); 
         }
-        case CLEAR_SESION: {
+        case "CLEAR_USER": {
             return { };
         }
         default: {

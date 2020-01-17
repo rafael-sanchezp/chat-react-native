@@ -11,6 +11,8 @@ import { connect } from "react-redux";
 import Navigation from "./navigator/main";
 import Login from "./screens/login";
 import * as Font from "expo-font";
+import Spinner from 'react-native-loading-spinner-overlay';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -32,6 +34,12 @@ class App extends React.Component {
     } else {
       return (
         <View style={styles.container}>
+          <Spinner
+          visible={this.props.status}
+          textContent={'Cargando Países...'}
+          textStyle={{color: 'white'}}
+          color={'white'}
+        />
           {Platform.OS === "ios" && <StatusBar barStyle="default" />}
           
             <Navigation />
@@ -60,8 +68,14 @@ class App extends React.Component {
   };
 }
 
+const mapStateToProps = state => {
+  const { status } = state.loading;
 
-export default App;
+  return {
+    status
+  };
+};
+export default connect(mapStateToProps)(App);
 
 const styles = StyleSheet.create({
   container: {

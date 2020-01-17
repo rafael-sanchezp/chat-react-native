@@ -51,7 +51,8 @@ class Login extends React.Component {
               titleStyle={{ fontFamily: "Lato-Bold" }}
               buttonStyle={styles.button}
               onPress={() => {
-                this.props.navigation.navigate("Chat");
+                //this.props.navigation.navigate("Chat");
+                this.props.SignUp();
               }}
               title="Login"
             />
@@ -77,9 +78,28 @@ class Login extends React.Component {
     )
   }
 }
+const mapStateToProps = (state) => {
+  console.log("Usuario----------->",state.session.user)
+  return {
+    user: state.session.user,
+  };
+};
+// Map Dispatch To Props (Dispatch Actions To Reducers. Reducers Then Modify The Data And Assign It To Your Props)
+const mapDispatchToProps = (dispatch) => {
+  // Action
+  return {
+    // Increase Counter
+    SignUp: () => dispatch({
+      type: 'LOGIN',
+      user: {
+        "nickname": "eduardoxlau",
+        "password": "admin123"
+      }
+    }),
+  };
+};
 
-
-export default Login;
+export   default connect(mapStateToProps, mapDispatchToProps) (Login);
 
 const styles = StyleSheet.create({
   container: {
