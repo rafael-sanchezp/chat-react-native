@@ -4,23 +4,27 @@ import {
     Text,
     StyleSheet,
     View,
-    KeyboardAvoidingView,
-    TouchableOpacity
+    KeyboardAvoidingView
 } from "react-native";
-import logo from "../assets/images/logo.png";
-
-import { Button, Header ,Avatar} from 'react-native-elements';
-import UselessTextInput from "../components/inputDefault"
+import { Button, Header, Avatar } from 'react-native-elements';
+import TextInput from "../components/inputDefault"
 import PhotoProfile from "../components/photoProfile";
 const { height, width } = Dimensions.get("window");
-
 import { connect } from "react-redux";
+const url_img = "http://127.0.0.1:3000/";
 class SignUp extends React.Component {
     static navigationOptions = {
         headerShown: false,
     };
     constructor(props) {
         super(props);
+        this.state = {
+            id: this.props.isLogin ? this.props.user.id : null,
+            nickname: this.props.isLogin ? this.props.user.nickname : null,
+            names: this.props.isLogin ? this.props.user.names : null,
+            password: this.props.isLogin ? this.props.user.password : null,
+            photo: "",
+        }
     }
 
     render() {
@@ -33,42 +37,49 @@ class SignUp extends React.Component {
                             color: "black",
                             size: width * 0.10,
                             type: "IconMaterial",
-                            onPress: () => this.props.navigation.navigate("Login")
-                        }}
-                        centerComponent={{
-                            text: "Sign Up",
-                            style: {
-                                color: "black",
-                                fontSize: width * 0.05,
-                                fontWeight: "bold"
+                            onPress: () => {
+                                if (this.props.isLogin) this.props.navigation.navigate("Home")
+                                else this.props.navigation.navigate("Login")
                             }
                         }}
-                        containerStyle={{
-                            backgroundColor: "transparent",
-                            borderBottomWidth: 0
-                        }}
+                        centerComponent={{ text: this.props.isLogin ? "Profile" : "Sign Up", style: { color: "black", fontSize: width * 0.05, fontWeight: "bold" } }}
+                        containerStyle={{ backgroundColor: "transparent", borderBottomWidth: 0 }}
                     />
                     <View style={styles.form}>
                         <View style={styles.containPhoto}>
-                            <PhotoProfile/>
+                            <PhotoProfile value={(photo) => { this.setState({ photo }) }} src={this.props.isLogin ? url_img + this.props.user.photo : ""} />
                         </View>
-                        <Text style={styles.title}>Names</Text>
-                        <UselessTextInput value={(text) => {
-                            console.log(`email ${text}`)
-                        }} />
                         <Text style={styles.title}>Nickname</Text>
-                        <UselessTextInput value={(text) => {
-                            console.log(`password ${text}`)
+                        <TextInput disable={this.props.isLogin ? true : false} valueInitial={this.state.nickname} value={(text) => {
+                            this.setState({ nickname: text })
+                        }} />
+                        <Text style={styles.title}>Names</Text>
+                        <TextInput valueInitial={this.state.names} value={(text) => {
+                            this.setState({ names: text })
                         }} />
                         <Text style={styles.title}>Password</Text>
-                        <UselessTextInput value={(text) => {
-                            console.log(`password ${text}`)
+                        <TextInput valueInitial={this.state.password} secureTextEntry={true} value={(text) => {
+                            this.setState({ password: text })
                         }} />
                         <Button
                             titleStyle={{ fontFamily: "Lato-Bold" }}
                             buttonStyle={styles.button}
-                            title="Login"
+                            onPress={() => {
+                                if (this.props.isLogin) this.props.UpdateUser(this.state)//if user is registers, request update
+                                else this.props.SignUp(this.state)
+                            }}
+                            title="Save"
                         />
+                        {this.props.isLogin?
+                        <Button
+                            titleStyle={{ fontFamily: "Lato-Bold" }}
+                            buttonStyle={styles.button}
+                            type="outline"
+                            onPress={() => {
+                                this.props.Logout()
+                            }}
+                            title="Logout"
+                        />:null}
                     </View>
                 </KeyboardAvoidingView>
             </View>
@@ -76,7 +87,28 @@ class SignUp extends React.Component {
     }
 }
 
-export default SignUp;
+const mapStateToProps = (state) => {
+    return {
+        user: state.session.user,
+        isLogin: state.session.isLogin
+    };
+};
+const mapDispatchToProps = (dispatch) => {
+    return {
+        Logout: () => dispatch({
+            type: 'LOGOUT'
+        }),
+        SignUp: (user) => dispatch({
+            type: 'SIGNUP',
+            user
+        }),
+        UpdateUser: (user) => dispatch({
+            type: 'UPDATE_USER',
+            user
+        }),
+    };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
 
 const styles = StyleSheet.create({
     container: {
@@ -86,7 +118,7 @@ const styles = StyleSheet.create({
     },
     title: {
         paddingVertical: 6,
-        fontSize:width*0.04,
+        fontSize: width * 0.04,
         fontFamily: "Lato-Regular"
     },
 
@@ -100,7 +132,7 @@ const styles = StyleSheet.create({
         flex: 2,
         padding: 20
     },
-    containPhoto:{
-        alignItems:'center'
+    containPhoto: {
+        alignItems: 'center'
     }
 });

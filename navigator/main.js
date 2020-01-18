@@ -5,14 +5,19 @@ import SignUp from "../screens/signup"
 import Home from "../screens/home"
 import Chat from "../screens/chat"
 const MainNavigator = createStackNavigator({
-    Login: {screen: Login},
-    SignUp: {screen: SignUp},
     Home: {screen: Home},
     Chat: {screen: Chat},
+    SignUp: {screen: SignUp},
   },
-  { initialRouteName: "Login"
+  { initialRouteName: "Home"
  });
-  
-  const Navigation = createAppContainer(MainNavigator);
-  
-  export default Navigation;
+ const LoginNavigator = createStackNavigator({
+  Login: {screen: Login},
+  SignUp: {screen: SignUp},
+},
+{ initialRouteName: "Login"
+});
+  const NavigationHome = createAppContainer(MainNavigator);
+  const NavigationLogin = createAppContainer(LoginNavigator);
+
+  export  {NavigationHome,NavigationLogin};

@@ -6,7 +6,7 @@ import reducers from './reducers'
 import createSagaMiddleware from 'redux-saga';
 
 // importing your root saga
-import dataSaga from './sagas';
+import rootSaga from './sagas/index';
 const sagaMiddleware = createSagaMiddleware();
 
 // Redux: Store
@@ -18,7 +18,7 @@ const store = createStore(
   ),
 );
 // Middleware: Redux Saga
-sagaMiddleware.run(dataSaga);
+sagaMiddleware.run(rootSaga);
 // Exports
 export {
   store

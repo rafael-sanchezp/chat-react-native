@@ -8,7 +8,7 @@ import {
 import { AppLoading } from "expo";
 import { Asset } from "expo-asset";
 import { connect } from "react-redux";
-import Navigation from "./navigator/main";
+import {NavigationHome,NavigationLogin} from "./navigator/main";
 import Login from "./screens/login";
 import * as Font from "expo-font";
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -41,8 +41,8 @@ class App extends React.Component {
           color={'white'}
         />
           {Platform.OS === "ios" && <StatusBar barStyle="default" />}
-          
-            <Navigation />
+            {this.props.isLogin?<NavigationHome/>:<NavigationLogin/> }
+            
       
         </View>
       );
@@ -70,9 +70,9 @@ class App extends React.Component {
 
 const mapStateToProps = state => {
   const { status } = state.loading;
-
+  const { isLogin } = state.session;
   return {
-    status
+    status,isLogin
   };
 };
 export default connect(mapStateToProps)(App);

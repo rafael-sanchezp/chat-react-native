@@ -5,101 +5,92 @@ import {
   StyleSheet,
   View,
   KeyboardAvoidingView,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard
 } from "react-native";
 import header from "../assets/images/header.png";
 import logo from "../assets/images/logo.png";
 
 import { Button, Image } from 'react-native-elements';
-import UselessTextInput from "../components/inputDefault"
+import TextInput from "../components/inputDefault"
 import BackgroundImage from "../components/backgroundImage";
 const { height, width } = Dimensions.get("window");
 
 import { connect } from "react-redux";
+const DismissKeyboard = ({ children }) => (
+  <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    {children}
+  </TouchableWithoutFeedback>
+);
 class Login extends React.Component {
   static navigationOptions = {
     headerShown: false,
   };
   constructor(props) {
     super(props);
+    this.state = {
+      nickname: null,
+      password: null
+    }
   }
 
   render() {
     return (
-      <View style={styles.container}>
-        <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
-          <BackgroundImage
-            source={header}
-            imageStyle={{ opacity: 1, resizeMode: 'stretch', width: width }}
-            containerStyle={{ flex: 1.5, alignItems: 'center', justifyContent: 'center' }}
-          >
-            <Image
-              style={styles.stretch}
-              source={logo}
-            />
-          </BackgroundImage>
-          <View style={styles.form}>
-            <Text style={styles.title}>Nickname</Text>
-            <UselessTextInput value={(text) => {
-              console.log(`email ${text}`)
-            }} />
-            <Text style={styles.title}>Password</Text>
-            <UselessTextInput value={(text) => {
-              console.log(`password ${text}`)
-            }} />
-            <Button
-              titleStyle={{ fontFamily: "Lato-Bold" }}
-              buttonStyle={styles.button}
-              onPress={() => {
-                //this.props.navigation.navigate("Chat");
-                this.props.SignUp();
-              }}
-              title="Login"
-            />
-            <TouchableOpacity
-              onPress={() => {
-                this.props.navigation.navigate("SignUp");
-              }}
-            >
-              <View style={{ flexDirection: "row", justifyContent: 'center' }}>
-                <Text style={styles.forget}>
-                  Don’t have an account?
-          </Text>
-
-                <Text style={[styles.forget, { color: "#0088FF", paddingHorizontal: 5 }]}>
-                  Sign up
-          </Text>
-
-              </View>
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
-      </View>
+      <DismissKeyboard>
+        <View style={styles.container}>
+          <KeyboardAvoidingView keyboardShouldPersistTaps={false} style={styles.container} behavior="padding" enabled>
+            <BackgroundImage
+              source={header}
+              imageStyle={{ opacity: 1, resizeMode: 'stretch', width: width }}
+              containerStyle={{ flex: 1.5, alignItems: 'center', justifyContent: 'center' }}>
+              <Image style={styles.stretch} source={logo}/>
+            </BackgroundImage>
+            <View style={styles.form}>
+              <Text style={styles.title}>Nickname</Text>
+              <TextInput value={(text) => this.setState({ nickname: text })} />
+              <Text style={styles.title}>Password</Text>
+              <TextInput secureTextEntry={true} value={(text) => this.setState({ password: text })} />
+              <Button
+                titleStyle={{ fontFamily: "Lato-Bold" }}
+                buttonStyle={styles.button}
+                disabled={(this.state.nickname && this.state.password) ? false : true}
+                onPress={() => this.props.Login(this.state)}
+                title="Login"/>
+              <TouchableOpacity
+                onPress={() => {
+                  this.props.navigation.navigate("SignUp");
+                }}>
+                <View style={{ flexDirection: "row", justifyContent: 'center' }}>
+                  <Text style={styles.forget}>Don’t have an account?</Text>
+                  <Text style={[styles.forget, { color: "#0088FF", paddingHorizontal: 5 }]}>Sign up </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </KeyboardAvoidingView>
+        </View>
+      </DismissKeyboard>
     )
   }
 }
 const mapStateToProps = (state) => {
-  console.log("Usuario----------->",state.session.user)
+  console.log("Usuario----------->", state.session.user)
   return {
-    user: state.session.user,
+    user: state.session.user
   };
 };
-// Map Dispatch To Props (Dispatch Actions To Reducers. Reducers Then Modify The Data And Assign It To Your Props)
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // Increase Counter
-    SignUp: () => dispatch({
+    Login: (user) => dispatch({
       type: 'LOGIN',
-      user: {
-        "nickname": "eduardoxlau",
-        "password": "admin123"
-      }
+      user
     }),
   };
 };
 
-export   default connect(mapStateToProps, mapDispatchToProps) (Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
 
 const styles = StyleSheet.create({
   container: {

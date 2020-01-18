@@ -13,6 +13,7 @@
     "apollo-client": "^2.6.8",
     "apollo-link-http": "^1.5.16",
     "expo": "~36.0.0",
+    "expo-image-manipulator": "^8.0.0",
     "expo-image-picker": "^8.0.2",
     "expo-permissions": "^8.0.0",
     "graphql": "^14.5.8",

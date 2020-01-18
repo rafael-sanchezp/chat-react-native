@@ -4,9 +4,11 @@ import { Avatar } from 'react-native-elements';
 const { height, width } = Dimensions.get("window");
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 
 
-const _hasPermissions = async () => {
+export default function PhotoProfile(props) {
+  const _hasPermissions = async () => {
     const { CAMERA, CAMERA_ROLL } = Permissions;
     const permissions = {
       [CAMERA]: await Permissions.askAsync(CAMERA)
@@ -19,6 +21,16 @@ const _hasPermissions = async () => {
       );
     }
     return Promise.resolve(true);
+  };
+ const  processImage = async (imageUrl) => {
+    let processImage = await ImageManipulator.manipulateAsync(
+      imageUrl,
+      [{ resize: { width: 400, height: 400 } }],
+      { format: "png", base64: true, compress: 0.5 }
+    );
+     updateImage("data:image/png;base64,"+processImage.base64)
+     props.value("data:image/png;base64,"+processImage.base64)
+
   };
 const _pickImageCamera = async () => {
     let result = _hasPermissions()
@@ -33,26 +45,27 @@ const _pickImageCamera = async () => {
       .then(image => {
        
         console.log(image)
-        this.processImage(image.uri);
+        processImage(image.uri);
 
       })
       .catch(error => {
         console.log(`[ pickFromGallery ] ${error}`);
       });
   };
-export default function PhotoProfile(props) {
+    console.log(props.src)
+    const [src, updateImage] = useState();
+    //if(src!=props.src)updateImage(props.src)
     return (
         <TouchableOpacity 
         onPress={() => {
             _pickImageCamera()
         }}>
         <Avatar
+            icon={{name: 'user', type: 'font-awesome'}}
+            showEditButton
             size="xlarge"
             rounded
-            source={{
-                uri:
-                'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-            }}
+            source={{uri:src}}
             />
         </TouchableOpacity>
     );

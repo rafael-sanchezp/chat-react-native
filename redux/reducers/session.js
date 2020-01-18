@@ -1,14 +1,14 @@
-import { SET_SESSION, CLEAR_SESION } from '../ActionTypes.js'
-const session = (state = { }, action) => {
+import { SET_USER, CLEAR_USER } from '../ActionTypes.js'
+const session = (state = { isLogin:false}, action) => {
     switch (action.type) {
-        case "SET_USER": {
-        const { user } = action;
+        case SET_USER: {
+        const { user ,isLogin} = action;
         return Object.assign({}, state, {
-            user
+            user,isLogin
          }); 
         }
-        case "CLEAR_USER": {
-            return { };
+        case CLEAR_USER: {
+            return { user:{},isLogin :false};
         }
         default: {
               return state

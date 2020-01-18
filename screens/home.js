@@ -8,7 +8,7 @@ import {
     KeyboardAvoidingView,
     TouchableOpacity
 } from "react-native";
-
+import { withNavigation } from 'react-navigation';
 import headerhome from "../assets/images/headerhome.png";
 import { Button, Header, SearchBar,Avatar } from 'react-native-elements';
 import Card from "../components/cardUser"
@@ -42,14 +42,16 @@ class Home extends React.Component {
                             <Text style={styles.title}>Messages</Text>
                             <TouchableOpacity 
                             onPress={() => {
-                                this.props.navigation.navigate("SignUp")
+                                console.log("go signup")
+                                this.props.navigation.navigate("SignUp");
                             }}>
                             <Avatar
                                 size="medium"
                                 rounded
+                                showEditButton
+                                icon={{name: 'user', type: 'font-awesome'}}
                                 source={{
-                                    uri:
-                                    'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+                                    uri:(this.props.user.photo?this.props.user.photo:""),
                                 }}
                                 />
                                 </TouchableOpacity>
@@ -97,8 +99,24 @@ class Home extends React.Component {
 }
 
 
-
-export default Home;
+const mapStateToProps = (state) => {
+    return {
+      user: state.session.user
+    };
+  };
+  const mapDispatchToProps = (dispatch) => {
+    return {
+      SignUp: (user) => dispatch({
+        type: 'SIGNUP',
+        user
+      }),
+      UpdateUser: (user) => dispatch({
+        type: 'UPDATE_USER',
+        user
+      }),
+    };
+  };
+  export default connect(mapStateToProps, mapDispatchToProps)(Home);
 
 const styles = StyleSheet.create({
     container: {
