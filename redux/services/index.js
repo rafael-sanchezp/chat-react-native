@@ -2,12 +2,33 @@ import gql from "graphql-tag";
 import { ApolloClient } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
-const api = "http://192.168.1.6:3000/graphql"
+const api = "http://192.168.1.9:3000/graphql"
 const yotube = (url) => {
   return fetch(url, options).then(response => response.json())
 }
+ const usersService= () => {
+  const client = new ApolloClient({
+    link: new HttpLink({ uri: api }),
+    cache: new InMemoryCache()
+  });
+  return (
+    client
+      .query({
+        query: gql`
+            query {
+              getUsers{
+                id
+                names
+                password
+                nickname
+                photo
+                }
+            }
+          `
+      })
+  )
+}
 const loginService = (user) => {
-  console.log("datos para guardar:", user)
   const client = new ApolloClient({
     link: new HttpLink({ uri: api }),
     cache: new InMemoryCache()
@@ -76,4 +97,4 @@ const updateUserService = (user) => {
       })
   )
 }
-export { loginService, yotube ,signUpService,updateUserService}
+export { loginService, yotube ,signUpService,updateUserService,usersService}

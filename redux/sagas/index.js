@@ -1,6 +1,6 @@
 import { all, fork} from 'redux-saga/effects';
 // Imports: Redux Sagas
-import { loginSaga,signUp,updateUser,logout} from './user';
+import { loginSaga,signUp,updateUser,logout,users} from './user';
 // Redux Saga: Root Saga
 export  default function* rootSaga () {
   yield all([
@@ -8,6 +8,7 @@ export  default function* rootSaga () {
     fork(signUp),
     fork(updateUser),
     fork(logout),
+    fork(users),
     
   ]);
 };

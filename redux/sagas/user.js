@@ -1,5 +1,5 @@
-import { loginService, signUpService,updateUserService } from '../services'
-import { loading, currentUser, LOGIN, SIGNUP,UPDATE_USER,LOGOUT,clearUser } from '../ActionTypes'
+import { loginService, signUpService,updateUserService,usersService } from '../services'
+import { loading,loadingScroll, getUsers,currentUser, LOGIN, SIGNUP,UPDATE_USER,LOGOUT,USERS,clearUser } from '../ActionTypes'
 import { delay, call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { showMessage, hideMessage } from "react-native-flash-message";
 function* loginConfig(data) {
@@ -38,6 +38,18 @@ function* updateUserConfig(data) {
     yield showMessage({ message: `Data incorrect`, type: "warning" });//send message error
   }
 }
+function* usersConfig() {
+  yield put(loadingScroll(true));
+  try {
+    const res = yield call(usersService)// request data
+    yield put(getUsers(res.data.getUsers));//dispatch object user
+    yield put(loadingScroll(false));//hide spiner
+  } catch (error) {
+    console.log(error)
+    yield put(loadingScroll(false));//hide spiner
+    yield showMessage({ message: `Data incorrect`, type: "warning" });//send message error
+  }
+}
 function* clearSessionConfig() {
     yield put(clearUser());//dispatch object user
 }
@@ -53,4 +65,7 @@ function* updateUser() {
 function* logout() {
   yield takeLatest(LOGOUT, clearSessionConfig);
 }
-export { loginSaga, signUp,updateUser,logout }
+function* users() {
+  yield takeLatest(USERS, usersConfig);
+}
+export { loginSaga, signUp,updateUser,logout,users }

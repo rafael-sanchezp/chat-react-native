@@ -5,10 +5,11 @@ import {
     StyleSheet,
     View,
     ScrollView,
+    RefreshControl,
     KeyboardAvoidingView,
     TouchableOpacity
 } from "react-native";
-import { withNavigation } from 'react-navigation';
+import logo from "../assets/images/logo.png";
 import headerhome from "../assets/images/headerhome.png";
 import { Button, Header, SearchBar,Avatar } from 'react-native-elements';
 import Card from "../components/cardUser"
@@ -24,11 +25,19 @@ class Home extends React.Component {
         super(props);
         this.state = {
             search: '',
+            users:[]
         };
     }
     updateSearch = search => {
         this.setState({ search });
     };
+    componentDidMount(){this.loadUsers()}
+    loadUsers(){ 
+        let users=this.props.getUsers()
+        console.log("users--->",users)
+        this.setState({users})
+    }
+    _onRefresh= () => {this.loadUsers()}
     render() {
         return (
             <View style={styles.container}>
@@ -55,10 +64,8 @@ class Home extends React.Component {
                                 }}
                                 />
                                 </TouchableOpacity>
-
                         </View>
                         <View style={styles.contentSearch}>
-
                             <SearchBar
                                 inputContainerStyle={{ borderRadius: height * 0.025, backgroundColor: "#F0F4FF" }}
                                 containerStyle={styles.containerSearch}
@@ -68,30 +75,23 @@ class Home extends React.Component {
                                 value={this.state.search}
                             />
                         </View>
-
                     </BackgroundImage>
                 </View>
                 <View style={styles.contentList}>
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        <TouchableOpacity 
-                            onPress={() => {
-                                this.props.navigation.navigate("Chat")
-                            }}>
-                            <Card>
-                            </Card>
+                    <ScrollView showsVerticalScrollIndicator={false}
+                          refreshControl={
+                            <RefreshControl refreshing={this.props.scroll} onRefresh={this._onRefresh} />
+                          } >
+                        <TouchableOpacity  onPress={() => { this.props.navigation.navigate("Chat")}}>
+                            <Card user={{id:0,nickname:"Melt studio",names:"General chat"}} image={logo} ></Card>
                         </TouchableOpacity>
-
-                        <Card></Card>
-                        <Card></Card>
-                        <Card></Card>
-                        <Card></Card>
-                        <Card></Card>
-                        <Card></Card>
-                        <Card></Card>
-                        <Card></Card>
-                        <Card></Card>
+                        {this.props.users.map((user,index)=>{
+                            return(
+                            <TouchableOpacity  onPress={() => { this.props.navigation.navigate("Chat")}}>
+                                <Card  user={user}  key={index}></Card>
+                            </TouchableOpacity>)
+                        })}    
                     </ScrollView>
-
                 </View>
             </View>
         )
@@ -101,19 +101,16 @@ class Home extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-      user: state.session.user
+      user: state.session.user,
+      users: state.users.users,
+      scroll:state.loading.scroll
     };
   };
   const mapDispatchToProps = (dispatch) => {
     return {
-      SignUp: (user) => dispatch({
-        type: 'SIGNUP',
-        user
-      }),
-      UpdateUser: (user) => dispatch({
-        type: 'UPDATE_USER',
-        user
-      }),
+      getUsers: () => dispatch({
+        type: 'USERS'
+      })
     };
   };
   export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -36,7 +36,7 @@ class App extends React.Component {
         <View style={styles.container}>
           <Spinner
           visible={this.props.status}
-          textContent={'Cargando Países...'}
+          textContent={'Loading...'}
           textStyle={{color: 'white'}}
           color={'white'}
         />

@@ -4,14 +4,19 @@ import {
     Text,
     StyleSheet,
     View,
-    KeyboardAvoidingView
+    KeyboardAvoidingView,TouchableWithoutFeedback,Keyboard
 } from "react-native";
-import { Button, Header, Avatar } from 'react-native-elements';
+import { Button, Header, Avatar ,} from 'react-native-elements';
 import TextInput from "../components/inputDefault"
 import PhotoProfile from "../components/photoProfile";
 const { height, width } = Dimensions.get("window");
 import { connect } from "react-redux";
 const url_img = "http://127.0.0.1:3000/";
+const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {children}
+    </TouchableWithoutFeedback>
+);
 class SignUp extends React.Component {
     static navigationOptions = {
         headerShown: false,
@@ -29,60 +34,62 @@ class SignUp extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
-                    <Header
-                        leftComponent={{
-                            icon: "keyboard-arrow-left",
-                            color: "black",
-                            size: width * 0.10,
-                            type: "IconMaterial",
-                            onPress: () => {
-                                if (this.props.isLogin) this.props.navigation.navigate("Home")
-                                else this.props.navigation.navigate("Login")
-                            }
-                        }}
-                        centerComponent={{ text: this.props.isLogin ? "Profile" : "Sign Up", style: { color: "black", fontSize: width * 0.05, fontWeight: "bold" } }}
-                        containerStyle={{ backgroundColor: "transparent", borderBottomWidth: 0 }}
-                    />
-                    <View style={styles.form}>
-                        <View style={styles.containPhoto}>
-                            <PhotoProfile value={(photo) => { this.setState({ photo }) }} src={this.props.isLogin ? url_img + this.props.user.photo : ""} />
-                        </View>
-                        <Text style={styles.title}>Nickname</Text>
-                        <TextInput disable={this.props.isLogin ? true : false} valueInitial={this.state.nickname} value={(text) => {
-                            this.setState({ nickname: text })
-                        }} />
-                        <Text style={styles.title}>Names</Text>
-                        <TextInput valueInitial={this.state.names} value={(text) => {
-                            this.setState({ names: text })
-                        }} />
-                        <Text style={styles.title}>Password</Text>
-                        <TextInput valueInitial={this.state.password} secureTextEntry={true} value={(text) => {
-                            this.setState({ password: text })
-                        }} />
-                        <Button
-                            titleStyle={{ fontFamily: "Lato-Bold" }}
-                            buttonStyle={styles.button}
-                            onPress={() => {
-                                if (this.props.isLogin) this.props.UpdateUser(this.state)//if user is registers, request update
-                                else this.props.SignUp(this.state)
+            <DismissKeyboard>
+                <View style={styles.container}>
+                    <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+                        <Header
+                            leftComponent={{
+                                icon: "keyboard-arrow-left",
+                                color: "black",
+                                size: width * 0.10,
+                                type: "IconMaterial",
+                                onPress: () => {
+                                    if (this.props.isLogin) this.props.navigation.navigate("Home")
+                                    else this.props.navigation.navigate("Login")
+                                }
                             }}
-                            title="Save"
+                            centerComponent={{ text: this.props.isLogin ? "Profile" : "Sign Up", style: { color: "black", fontSize: width * 0.05, fontWeight: "bold" } }}
+                            containerStyle={{ backgroundColor: "transparent", borderBottomWidth: 0 }}
                         />
-                        {this.props.isLogin?
-                        <Button
-                            titleStyle={{ fontFamily: "Lato-Bold" }}
-                            buttonStyle={styles.button}
-                            type="outline"
-                            onPress={() => {
-                                this.props.Logout()
-                            }}
-                            title="Logout"
-                        />:null}
-                    </View>
-                </KeyboardAvoidingView>
-            </View>
+                        <View style={styles.form}>
+                            <View style={styles.containPhoto}>
+                                <PhotoProfile value={(photo) => { this.setState({ photo }) }} src={this.props.isLogin ? url_img + this.props.user.photo : ""} />
+                            </View>
+                            <Text style={styles.title}>Nickname</Text>
+                            <TextInput disable={this.props.isLogin ? true : false} valueInitial={this.state.nickname} value={(text) => {
+                                this.setState({ nickname: text })
+                            }} />
+                            <Text style={styles.title}>Names</Text>
+                            <TextInput valueInitial={this.state.names} value={(text) => {
+                                this.setState({ names: text })
+                            }} />
+                            <Text style={styles.title}>Password</Text>
+                            <TextInput valueInitial={this.state.password} secureTextEntry={true} value={(text) => {
+                                this.setState({ password: text })
+                            }} />
+                            <Button
+                                titleStyle={{ fontFamily: "Lato-Bold" }}
+                                buttonStyle={styles.button}
+                                onPress={() => {
+                                    if (this.props.isLogin) this.props.UpdateUser(this.state)//if user is registers, request update
+                                    else this.props.SignUp(this.state)
+                                }}
+                                title="Save"
+                            />
+                            {this.props.isLogin ?
+                                <Button
+                                    titleStyle={{ fontFamily: "Lato-Bold" }}
+                                    buttonStyle={styles.button}
+                                    type="outline"
+                                    onPress={() => {
+                                        this.props.Logout()
+                                    }}
+                                    title="Logout"
+                                /> : null}
+                        </View>
+                    </KeyboardAvoidingView>
+                </View>
+            </DismissKeyboard>
         )
     }
 }

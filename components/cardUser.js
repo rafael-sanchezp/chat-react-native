@@ -2,23 +2,22 @@ import React, { Component, useState } from 'react';
 import { TextInput, View, Text, StyleSheet ,Dimensions,TouchableOpacity} from 'react-native';
 import { Avatar } from 'react-native-elements';
 const { height, width } = Dimensions.get("window");
+import logo from "../assets/images/logo.png";
 
 export default function Card(props) {
     return (
         <View style={styles.container}>
             <View style={styles.containerImage}>
                 <Avatar
+                    icon={{name: 'user', type: 'font-awesome'}}
                     rounded
                     size="medium"
-                    source={{
-                        uri:
-                            'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-                    }}
-                />
+                    overlayContainerStyle={{backgroundColor:"#fff",borderWidth:1,borderColor:"#cecece"}}
+                    source={props.user.id==0?logo:props.user.photo}                />
             </View>
             <View style={styles.containerText}>
-                <Text style={styles.letterNickname}>Eduardoxlau</Text>
-                <Text style={styles.letterName}>Rafael sanchez</Text>
+                <Text style={styles.letterNickname}>{props.user.nickname}</Text>
+                <Text style={styles.letterName}>{props.user.names}</Text>
             </View>
             <View style={styles.containerHour}>
                 <Text style={styles.letterHour}>5 min</Text>
