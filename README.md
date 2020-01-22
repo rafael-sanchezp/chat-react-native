@@ -1,6 +1,9 @@
 **Chat movil  react-native with redux and graphql**
-![Login](https://lh3.google.com/u/2/d/1EDu1Q22hEvVX_c-pL5opP_yCvZ_s3TK1=w1280-h629-iv1)
-![signup](https://lh3.google.com/u/2/d/1QcxVrl72q9w5hsmAB1gmq6btbX32h5Aj=w1280-h629-iv1)![Home](https://lh3.google.com/u/2/d/1qpnkkPVksjAP1De-7fyl3JkwyEceyBBm=w1280-h629-iv1)![Chat](https://lh3.google.com/u/2/d/1DuJjoigHaWTsnw-JcxF40fK1DVgX_bxw=w1280-h629-iv1)
+![Login](http://34.69.133.82/public/IMG_1892.PNG)
+![SignUp](http://34.69.133.82/public/IMG_1893.PNG)
+![Home](http://34.69.133.82/public/IMG_1894.PNG)
+![Chat](http://34.69.133.82/public/IMG_1896.PNG)
+
 ## Usage
 ##### 
 install the package
