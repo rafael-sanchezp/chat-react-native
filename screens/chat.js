@@ -28,22 +28,23 @@ class Chat extends React.Component {
     }
     componentDidMount(){
         console.log("*****************************************************")
-        console.log("***************** componentDidMount ****************")
+        console.log("***************** componentDidMount *****************")
         console.log("*****************************************************")
-        this.scrollView.scrollToEnd({ animated: true })
-        
+        this.props.socket({owner: this.props.user.id, user: this.props.messages.user.id == 0 ? null : this.props.messages.user.id})//register socket
     }
     componentWillUnmount(){
         console.log("*****************************************************")
-        console.log("**************  componentWillUnmount ********************")
+        console.log("**************  componentWillUnmount ****************")
         console.log("*****************************************************")
+        this.props.closeSocket()
     }
     updateSearch = search => {
         this.setState({ search });
     };
     sendMessage() {
+        //create data to send to redux
         let data = {owner: this.props.user.id, user: this.props.messages.user.id == 0 ? null : this.props.messages.user.id,text: this.state.search }
-        if(this.state.search.length>0)this.props.sendMessage(data)//if validate field is null
+        if(this.state.search.length>0)this.props.sendMessage(data)//if validate field is null and send redux
         this.setState({ search: "" })
     }
     componentDidUpdate(prevProps){
@@ -125,9 +126,12 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
     return {
-        dataMessages: (data) => dispatch({
-            type: 'GET_MESSAGES',
+        socket: (data) => dispatch({
+            type: 'SOCKET',
             data
+        }),
+        closeSocket: () => dispatch({
+            type: 'CLOSE_SOCKET'
         }),
         sendMessage: (msg) => dispatch({
             type: 'SEND_MESSAGE',

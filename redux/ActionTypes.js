@@ -13,6 +13,7 @@ export const MESSAGES="MESSAGES"
 export const GET_MESSAGES="GET_MESSAGES"
 export const ACTIVATE_SCROLL="ACTIVATE_SCROLL"
 export const ADD_MESSAGES="ADD_MESSAGES"
+export const SOCKET="SOCKET"
 export const SEND_MESSAGE="SEND_MESSAGE"
 export function currentUser(user) {
 	return {

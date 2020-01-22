@@ -2,12 +2,17 @@ import gql from "graphql-tag";
 import { ApolloClient } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
+import { SubscriptionClient } from "subscriptions-transport-ws";
+
 const api = "http://192.168.1.9:3000/graphql"
+var wsLink = new SubscriptionClient(api, {
+  reconnect: true
+});
 const youtubeService = (text) => {
   return fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${text}&type=video&key=AIzaSyCHsAUodbSKWzzRXI8ZDHYTSV9TdBKB2ZE`).then(response => response.json())
 }
-const getMessagesService= (input) => {
-  console.log("input---->",input)
+const getMessagesService = (input) => {
+  console.log("input---->", input)
   const client = new ApolloClient({
     link: new HttpLink({ uri: api }),
     cache: new InMemoryCache()
@@ -31,9 +36,9 @@ const getMessagesService= (input) => {
                 type
               }
             }
-          `,variables:{
-            input
-          }
+          `, variables: {
+          input
+        }
       })
   )
 }
@@ -62,11 +67,36 @@ const sendMessageService = (data) => {
           }
         }
           `,
-        variables: {"input": data}
+        variables: { "input": data }
       })
   )
 }
- const usersService= () => {
+const socketService = (input) => {
+  let client = new ApolloClient({
+    link: wsLink,
+    cache: new InMemoryCache()
+  });
+  return client.subscribe({
+    query: gql`
+            subscription Listen($input:MessageInput){
+              Listen(input:$input){
+                id
+                user{
+                  id
+                  names
+                }
+                owner{
+                  id
+                  names
+                }
+                text
+                type
+              }
+            }
+    `, variables: { input }
+  });
+}
+const usersService = () => {
   const client = new ApolloClient({
     link: new HttpLink({ uri: api }),
     cache: new InMemoryCache()
@@ -107,7 +137,7 @@ const loginService = (user) => {
                 }
             }
           `,
-        variables: {"input": user}
+        variables: { "input": user }
       })
   )
 }
@@ -130,7 +160,7 @@ const signUpService = (user) => {
             }
           }
           `,
-        variables: {"input": user}
+        variables: { "input": user }
       })
   )
 }
@@ -153,8 +183,8 @@ const updateUserService = (user) => {
             }
           }
           `,
-        variables: {"input": user}
+        variables: { "input": user }
       })
   )
 }
-export { loginService, youtubeService ,signUpService,updateUserService,usersService,getMessagesService,sendMessageService}
+export { loginService, youtubeService, signUpService, updateUserService, usersService, getMessagesService, sendMessageService, socketService }
