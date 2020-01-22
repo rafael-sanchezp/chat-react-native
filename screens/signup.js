@@ -11,7 +11,8 @@ import TextInput from "../components/inputDefault"
 import PhotoProfile from "../components/photoProfile";
 const { height, width } = Dimensions.get("window");
 import { connect } from "react-redux";
-const url_img = "http://127.0.0.1:3000/";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 const DismissKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
@@ -36,7 +37,6 @@ class SignUp extends React.Component {
         return (
             <DismissKeyboard>
                 <View style={styles.container}>
-                    <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
                         <Header
                             leftComponent={{
                                 icon: "keyboard-arrow-left",
@@ -51,9 +51,10 @@ class SignUp extends React.Component {
                             centerComponent={{ text: this.props.isLogin ? "Profile" : "Sign Up", style: { color: "black", fontSize: width * 0.05, fontWeight: "bold" } }}
                             containerStyle={{ backgroundColor: "transparent", borderBottomWidth: 0 }}
                         />
+                        <KeyboardAwareScrollView enableOnAndroid resetScrollToCoords={{ x: 0, y: 0 }} contentContainerStyle={{ flexGrow: 1 }} scrollEnabled>
                         <View style={styles.form}>
                             <View style={styles.containPhoto}>
-                                <PhotoProfile value={(photo) => { this.setState({ photo }) }} src={this.props.isLogin ? url_img + this.props.user.photo : ""} />
+                                <PhotoProfile value={(photo) => { this.setState({ photo }) }} src={this.props.isLogin ?this.props.user.photo : ""} />
                             </View>
                             <Text style={styles.title}>Nickname</Text>
                             <TextInput disable={this.props.isLogin ? true : false} valueInitial={this.state.nickname} value={(text) => {
@@ -75,6 +76,7 @@ class SignUp extends React.Component {
                                     else this.props.SignUp(this.state)
                                 }}
                                 title="Save"
+                                disabled={(this.state.nickname && this.state.password && this.state.names ) ? false : true}
                             />
                             {this.props.isLogin ?
                                 <Button
@@ -87,7 +89,7 @@ class SignUp extends React.Component {
                                     title="Logout"
                                 /> : null}
                         </View>
-                    </KeyboardAvoidingView>
+                    </KeyboardAwareScrollView>
                 </View>
             </DismissKeyboard>
         )

@@ -5,12 +5,9 @@ import {
     StyleSheet,
     View,
     ScrollView,
-    KeyboardAvoidingView,
-    TouchableOpacity,
+    KeyboardAvoidingView,TouchableOpacity
     
 } from "react-native";
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
 import {WebView } from "react-native-webview"
 import { Button, Header, SearchBar, Icon } from 'react-native-elements';
 const { height, width } = Dimensions.get("window");
@@ -24,6 +21,7 @@ class Chat extends React.Component {
         super(props);
         this.state = {
             search: '',
+            scrollTop:false
         };
     }
     componentDidMount(){
@@ -37,7 +35,10 @@ class Chat extends React.Component {
         console.log("**************  componentWillUnmount ****************")
         console.log("*****************************************************")
         this.props.closeSocket()
+        
     }
+   
+    
     updateSearch = search => {
         this.setState({ search });
     };
@@ -53,6 +54,8 @@ class Chat extends React.Component {
         }
     }
     render() {
+        const top=this.state.scrollTop?28:0
+        console.log(top)
         return (
             <View style={styles.container}>
                 <Header
@@ -68,7 +71,7 @@ class Chat extends React.Component {
                         backgroundColor: "#5479F1",
                         borderBottomWidth: 0
                     }}/>
-                <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior="padding" enabled>
+                <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior="padding" keyboardVerticalOffset={28} enabled>
                     <View style={styles.contentList}>
                         <ScrollView showsVerticalScrollIndicator={false} ref={(view) => {
                             this.scrollView = view;
@@ -101,14 +104,16 @@ class Chat extends React.Component {
                                 onChangeText={this.updateSearch}
                                 value={this.state.search}
                             />
+                            <TouchableOpacity onPress={() => this.sendMessage()}>
                             <Icon
                                 containerStyle={{ flex: 2.5 }}
                                 reverse
                                 name='ios-send'
                                 type='ionicon'
                                 color='#517fa4'
-                                onPress={() => this.sendMessage()}
                             />
+                            </TouchableOpacity>
+                            
                         </View>
                     </View>
                 </KeyboardAvoidingView>
@@ -166,7 +171,7 @@ const styles = StyleSheet.create({
     },
     containSearch: {
         flexDirection: "row",
-        paddingVertical: height * 0.01,
+        paddingTop: height * 0.01,
         paddingHorizontal: width * 0.05
 
     },

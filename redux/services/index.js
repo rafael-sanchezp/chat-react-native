@@ -4,7 +4,7 @@ import { HttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 
-const api = "http://192.168.1.9:3000/graphql"
+const api = "http://35.224.179.43:3000/graphql"
 var wsLink = new SubscriptionClient(api, {
   reconnect: true
 });
@@ -96,7 +96,7 @@ const socketService = (input) => {
     `, variables: { input }
   });
 }
-const usersService = () => {
+const usersService = (id) => {
   const client = new ApolloClient({
     link: new HttpLink({ uri: api }),
     cache: new InMemoryCache()
@@ -106,7 +106,7 @@ const usersService = () => {
       .query({
         query: gql`
             query {
-              getUsers{
+              getUsers(id:"${id}"){
                 id
                 names
                 password

@@ -42,10 +42,10 @@ class Home extends React.Component {
         this.props.updateUsersSearch(this.props.users)
     }
     componentDidMount() {
-        this.props.getUsers()
+        this.props.getUsers(this.props.user)
     }
     _onRefresh = () => {
-        this.props.getUsers()
+        this.props.getUsers(this.props.user)
     }
     _goChat(user){
         let data={
@@ -132,8 +132,9 @@ const mapDispatchToProps = (dispatch) => {
             type: 'GET_MESSAGES',
             data
         }),
-        getUsers: () => dispatch({
-            type: 'USERS'
+        getUsers: (user) => dispatch({
+            type: 'USERS',
+            user
         }),
         updateUsersSearch: (users) => dispatch({
             type: 'UPDATE_USERS_SEARCH',

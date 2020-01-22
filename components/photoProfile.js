@@ -53,7 +53,7 @@ const _pickImageCamera = async () => {
       });
   };
     console.log(props.src)
-    const [src, updateImage] = useState();
+    const [src, updateImage] = useState(props.src);
     //if(src!=props.src)updateImage(props.src)
     return (
         <TouchableOpacity 

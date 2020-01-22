@@ -1,6 +1,8 @@
 import React, { Component, useState } from 'react';
 import { TextInput, View, Text, StyleSheet ,Dimensions,TouchableOpacity} from 'react-native';
 import { Avatar } from 'react-native-elements';
+import avatar from  "../assets/images/avatar.jpg";
+
 const { height, width } = Dimensions.get("window");
 import logo from "../assets/images/logo.png";
 
@@ -13,7 +15,7 @@ export default function Card(props) {
                     rounded
                     size="medium"
                     overlayContainerStyle={{backgroundColor:"#fff",borderWidth:1,borderColor:"#cecece"}}
-                    source={props.user.id==0?logo:props.user.photo}                />
+                    source={props.user.id==0 ?logo:props.user.photo==null?avatar :{uri:props.user.photo}}                />
             </View>
             <View style={styles.containerText}>
                 <Text style={styles.letterNickname}>{props.user.nickname}</Text>

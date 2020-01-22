@@ -39,17 +39,17 @@ function* updateUserConfig(data) {
     yield showMessage({ message: `Data incorrect`, type: "warning" });//send message error
   }
 }
-function* usersConfig() {
+function* usersConfig(data) {
   yield put(loadingScroll(true));
   try {
-    const res = yield call(usersService)// request data
+    const res = yield call(usersService,data.user.id)// request data
     yield put(getUsers(res.data.getUsers));//dispatch object user
     yield put(getUsersSearch(res.data.getUsers));//dispatch object user for search
     yield put(loadingScroll(false));//hide spiner
   } catch (error) {
     console.log(error)
     yield put(loadingScroll(false));//hide spiner
-    yield showMessage({ message: `Data incorrect`, type: "warning" });//send message error
+    //yield showMessage({ message: `Data incorrect`, type: "warning" });//send message error
   }
 }
 function* updateSearchConfig(data) {
