@@ -9,9 +9,10 @@ import * as ImageManipulator from "expo-image-manipulator";
 
 export default function PhotoProfile(props) {
   const _hasPermissions = async () => {
-    const { CAMERA, CAMERA_ROLL } = Permissions;
+    const { CAMERA,CAMERA_ROLL } = Permissions;
     const permissions = {
-      [CAMERA]: await Permissions.askAsync(CAMERA)
+      [CAMERA]: await Permissions.askAsync(CAMERA),
+      [CAMERA_ROLL]: await Permissions.askAsync(CAMERA_ROLL),
     };
     if (permissions[CAMERA].status !== "granted") {
       if (Platform.OS === "ios") Linking.openURL("app-settings:");
