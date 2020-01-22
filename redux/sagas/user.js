@@ -1,5 +1,5 @@
-import { loginService, signUpService,updateUserService,usersService } from '../services'
-import { loading,loadingScroll, getUsers,currentUser, LOGIN, SIGNUP,UPDATE_USER,LOGOUT,USERS,clearUser } from '../ActionTypes'
+import { loginService, signUpService, updateUserService, usersService } from '../services'
+import { loading, loadingScroll, getUsers, getUsersSearch, currentUser, LOGIN, SIGNUP, UPDATE_USER, LOGOUT, USERS, UPDATE_USERS_SEARCH, clearUser } from '../ActionTypes'
 import { delay, call, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import { showMessage, hideMessage } from "react-native-flash-message";
 function* loginConfig(data) {
@@ -32,6 +32,7 @@ function* updateUserConfig(data) {
     const res = yield call(updateUserService, data.user)// request data
     yield put(currentUser(res.data.UpdateUser));//dispatch object user
     yield put(loading(false));//hide spiner
+    yield showMessage({ message: `Data update`, type: "success" });//send message error
   } catch (error) {
     console.log(error)
     yield put(loading(false));//hide spiner
@@ -43,6 +44,7 @@ function* usersConfig() {
   try {
     const res = yield call(usersService)// request data
     yield put(getUsers(res.data.getUsers));//dispatch object user
+    yield put(getUsersSearch(res.data.getUsers));//dispatch object user for search
     yield put(loadingScroll(false));//hide spiner
   } catch (error) {
     console.log(error)
@@ -50,8 +52,12 @@ function* usersConfig() {
     yield showMessage({ message: `Data incorrect`, type: "warning" });//send message error
   }
 }
+function* updateSearchConfig(data) {
+
+  yield put(getUsersSearch(data.users));//dispatch object user for search
+}
 function* clearSessionConfig() {
-    yield put(clearUser());//dispatch object user
+  yield put(clearUser());//dispatch object user
 }
 function* loginSaga() {
   yield takeLatest(LOGIN, loginConfig);
@@ -68,4 +74,8 @@ function* logout() {
 function* users() {
   yield takeLatest(USERS, usersConfig);
 }
-export { loginSaga, signUp,updateUser,logout,users }
+
+function* updateUsersSearch() {
+  yield takeLatest(UPDATE_USERS_SEARCH, updateSearchConfig);
+}
+export { loginSaga, signUp, updateUser, logout, users, updateUsersSearch }

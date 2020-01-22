@@ -12,7 +12,7 @@ import {NavigationHome,NavigationLogin} from "./navigator/main";
 import Login from "./screens/login";
 import * as Font from "expo-font";
 import Spinner from 'react-native-loading-spinner-overlay';
-
+import * as NavigationService from './redux/services/navigation.js'
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -21,7 +21,10 @@ class App extends React.Component {
     };
   }
 
-  
+  setNavigation() {
+    console.log("update navigation")
+    NavigationService.setNavigator(this.navigator);
+  }
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
@@ -41,7 +44,10 @@ class App extends React.Component {
           color={'white'}
         />
           {Platform.OS === "ios" && <StatusBar barStyle="default" />}
-            {this.props.isLogin?<NavigationHome/>:<NavigationLogin/> }
+            {this.props.isLogin?<NavigationHome  ref={nav => {
+          this.navigator = nav;
+          this.setNavigation()
+        }} /> :<NavigationLogin /> }
             
       
         </View>
@@ -65,6 +71,7 @@ class App extends React.Component {
 
   _handleFinishLoading = () => {
     this.setState({ isLoadingComplete: true });
+    //this.setNavigation()
   };
 }
 

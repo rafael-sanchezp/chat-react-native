@@ -6,16 +6,20 @@ import {
     View,
     ScrollView,
     RefreshControl,
-    KeyboardAvoidingView,
+    KeyboardAvoidingView, Keyboard, TouchableWithoutFeedback,
     TouchableOpacity
 } from "react-native";
 import logo from "../assets/images/logo.png";
 import headerhome from "../assets/images/headerhome.png";
-import { Button, Header, SearchBar,Avatar } from 'react-native-elements';
+import { Button, Header, SearchBar, Avatar } from 'react-native-elements';
 import Card from "../components/cardUser"
 import BackgroundImage from "../components/backgroundImage";
 const { height, width } = Dimensions.get("window");
-
+const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {children}
+    </TouchableWithoutFeedback>
+);
 import { connect } from "react-redux";
 class Home extends React.Component {
     static navigationOptions = {
@@ -24,76 +28,91 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            search: '',
-            users:[]
+            search: ''
         };
     }
     updateSearch = search => {
         this.setState({ search });
+        let users = []
+        if (search == "") users = this.props.users
+        else users = this.props.users.filter(item => item.names.toLowerCase().includes(search.toLowerCase()));
+        this.props.updateUsersSearch(users)
     };
-    componentDidMount(){this.loadUsers()}
-    loadUsers(){ 
-        let users=this.props.getUsers()
-        console.log("users--->",users)
-        this.setState({users})
+    cancelSearch() {
+        this.props.updateUsersSearch(this.props.users)
     }
-    _onRefresh= () => {this.loadUsers()}
+    componentDidMount() {
+        this.props.getUsers()
+    }
+    _onRefresh = () => {
+        this.props.getUsers()
+    }
+    _goChat(user){
+        let data={
+            user,
+            owner:this.props.user
+        }
+        this.props.dataMessages(data)
+    }
     render() {
         return (
-            <View style={styles.container}>
-                <View style={styles.header}>
-                    <BackgroundImage
-                        source={headerhome}
-                        imageStyle={{ opacity: 1, resizeMode: 'stretch', width: width }}
-                        containerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-                    >
-                        <View style={styles.contentTitle}>
-                            <Text style={styles.title}>Messages</Text>
-                            <TouchableOpacity 
-                            onPress={() => {
-                                console.log("go signup")
-                                this.props.navigation.navigate("SignUp");
-                            }}>
-                            <Avatar
-                                size="medium"
-                                rounded
-                                showEditButton
-                                icon={{name: 'user', type: 'font-awesome'}}
-                                source={{
-                                    uri:(this.props.user.photo?this.props.user.photo:""),
-                                }}
-                                />
+            <DismissKeyboard>
+                <View style={styles.container}>
+                    <View style={styles.header}>
+                        <BackgroundImage
+                            source={headerhome}
+                            imageStyle={{ opacity: 1, resizeMode: 'stretch', width: width }}
+                            containerStyle={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+                        >
+                            <View style={styles.contentTitle}>
+                                <Text style={styles.title}>Messages</Text>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        console.log("go signup")
+                                        this.props.navigation.navigate("SignUp");
+                                    }}>
+                                    <Avatar
+                                        size="medium"
+                                        rounded
+                                        showEditButton
+                                        icon={{ name: 'user', type: 'font-awesome' }}
+                                        source={{
+                                            uri: (this.props.user.photo ? this.props.user.photo : ""),
+                                        }}
+                                    />
                                 </TouchableOpacity>
-                        </View>
-                        <View style={styles.contentSearch}>
-                            <SearchBar
-                                inputContainerStyle={{ borderRadius: height * 0.025, backgroundColor: "#F0F4FF" }}
-                                containerStyle={styles.containerSearch}
-                                inputStyle={{ height: height * 0.05 }}
-                                placeholder="Search"
-                                onChangeText={this.updateSearch}
-                                value={this.state.search}
-                            />
-                        </View>
-                    </BackgroundImage>
+                            </View>
+                            <View style={styles.contentSearch}>
+                                <SearchBar
+                                    inputContainerStyle={{ borderRadius: height * 0.025, backgroundColor: "#F0F4FF" }}
+                                    containerStyle={styles.containerSearch}
+                                    inputStyle={{ height: height * 0.05 }}
+                                    placeholder="Search"
+                                    onCancel={this.cancelSearch}
+                                    onChangeText={this.updateSearch}
+                                    value={this.state.search}
+                                />
+                            </View>
+                        </BackgroundImage>
+                    </View>
+                    <View style={styles.contentList}>
+                        <ScrollView showsVerticalScrollIndicator={false}
+                            refreshControl={
+                                <RefreshControl refreshing={this.props.scroll} onRefresh={this._onRefresh} />
+                            } >
+                            <TouchableOpacity onPress={() => { this._goChat({ id: 0, nickname: "Melt studio", names: "General chat" }) }}>
+                                <Card user={{ id: 0, nickname: "Melt studio", names: "General chat" }} image={logo} ></Card>
+                            </TouchableOpacity>
+                            {this.props.usersSearch.map((user, index) => {
+                                return (
+                                    <TouchableOpacity key={index} onPress={() => { this._goChat(user) }}>
+                                        <Card user={user} key={index}></Card>
+                                    </TouchableOpacity>)
+                            })}
+                        </ScrollView>
+                    </View>
                 </View>
-                <View style={styles.contentList}>
-                    <ScrollView showsVerticalScrollIndicator={false}
-                          refreshControl={
-                            <RefreshControl refreshing={this.props.scroll} onRefresh={this._onRefresh} />
-                          } >
-                        <TouchableOpacity  onPress={() => { this.props.navigation.navigate("Chat")}}>
-                            <Card user={{id:0,nickname:"Melt studio",names:"General chat"}} image={logo} ></Card>
-                        </TouchableOpacity>
-                        {this.props.users.map((user,index)=>{
-                            return(
-                            <TouchableOpacity  onPress={() => { this.props.navigation.navigate("Chat")}}>
-                                <Card  user={user}  key={index}></Card>
-                            </TouchableOpacity>)
-                        })}    
-                    </ScrollView>
-                </View>
-            </View>
+            </DismissKeyboard>
         )
     }
 }
@@ -101,19 +120,28 @@ class Home extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-      user: state.session.user,
-      users: state.users.users,
-      scroll:state.loading.scroll
+        user: state.session.user,
+        users: state.users.users,
+        usersSearch: state.users.search,
+        scroll: state.loading.scroll
     };
-  };
-  const mapDispatchToProps = (dispatch) => {
+};
+const mapDispatchToProps = (dispatch) => {
     return {
-      getUsers: () => dispatch({
-        type: 'USERS'
-      })
+        dataMessages: (data) => dispatch({
+            type: 'GET_MESSAGES',
+            data
+        }),
+        getUsers: () => dispatch({
+            type: 'USERS'
+        }),
+        updateUsersSearch: (users) => dispatch({
+            type: 'UPDATE_USERS_SEARCH',
+            users
+        }),
     };
-  };
-  export default connect(mapStateToProps, mapDispatchToProps)(Home);
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
 
 const styles = StyleSheet.create({
     container: {
@@ -133,7 +161,7 @@ const styles = StyleSheet.create({
         borderBottomColor: "transparent"
     },
     contentTitle: {
-        flexDirection:"row",
+        flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "flex-end",
         paddingHorizontal: width * 0.09,

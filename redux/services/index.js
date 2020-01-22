@@ -3,8 +3,68 @@ import { ApolloClient } from "apollo-client";
 import { HttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
 const api = "http://192.168.1.9:3000/graphql"
-const yotube = (url) => {
-  return fetch(url, options).then(response => response.json())
+const youtubeService = (text) => {
+  return fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${text}&type=video&key=AIzaSyCHsAUodbSKWzzRXI8ZDHYTSV9TdBKB2ZE`).then(response => response.json())
+}
+const getMessagesService= (input) => {
+  console.log("input---->",input)
+  const client = new ApolloClient({
+    link: new HttpLink({ uri: api }),
+    cache: new InMemoryCache()
+  });
+  return (
+    client
+      .query({
+        query: gql`
+            query  getMessage($input:MessageInput){
+              getMessage(input:$input){
+                id
+                user{
+                  id
+                  names
+                }
+                owner{
+                  id
+                  names
+                }
+                text
+                type
+              }
+            }
+          `,variables:{
+            input
+          }
+      })
+  )
+}
+const sendMessageService = (data) => {
+  const client = new ApolloClient({
+    link: new HttpLink({ uri: api }),
+    cache: new InMemoryCache()
+  });
+  return (
+    client
+      .mutate({
+        mutation: gql`
+        mutation createMessage($input:MessageInput){
+          createMessage(input:$input){
+            id
+            user{
+              id
+              names
+            }
+            owner{
+              id
+              names
+            }
+            text
+            type
+          }
+        }
+          `,
+        variables: {"input": data}
+      })
+  )
 }
  const usersService= () => {
   const client = new ApolloClient({
@@ -97,4 +157,4 @@ const updateUserService = (user) => {
       })
   )
 }
-export { loginService, yotube ,signUpService,updateUserService,usersService}
+export { loginService, youtubeService ,signUpService,updateUserService,usersService,getMessagesService,sendMessageService}
